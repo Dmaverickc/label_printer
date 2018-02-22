@@ -1,14 +1,20 @@
 import csv 
+import os
 import labels
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase.pdfmetrics import registerFont, stringWidth
 from reportlab.graphics import shapes
 from reportlab.lib import colors
+from Tkinter import Tk
+from tkFileDialog import askopenfilename
+import pandas as pd
 
 
 specs = labels.Specification(210, 297, 2, 8, 90, 25, corner_radius=2)
 
 ##### muiltproscessing has to be done & the lenght of the str 
+
+
 
 def csv_reader(file_obj):
 
@@ -108,9 +114,13 @@ def single_position(s_label):
 sheet = labels.Sheet(specs, draw_label, border=True)
 
 if __name__ == "__main__":
-	
 
-	with open("test.csv") as f_obj:   # opens the csv file
+	Tk().withdraw() # we don't want a full GUI, so keep the root window from appearing
+	filename = askopenfilename() # show an "Open" dialog box and return the path to the selected file
+
+	#need to add another function to convert file to csv
+
+	with open(filename) as f_obj:   # opens the csv file
 		# still have to get this to print to document, might try multiprocessing to do this
 		csv_reader(f_obj)             # sends the csv_reader function the csv data file 
 
