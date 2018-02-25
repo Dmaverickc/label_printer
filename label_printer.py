@@ -8,11 +8,18 @@ from reportlab.lib import colors
 from Tkinter import Tk
 from tkFileDialog import askopenfilename
 import pandas as pd
-
+import ntpath
 
 specs = labels.Specification(210, 297, 2, 8, 90, 25, corner_radius=2)
 
 ##### muiltproscessing has to be done & the lenght of the str 
+
+def file_converter(file_obj):
+	
+	file_obj = ntpath.basename(file_obj)  # just takes the file name from the path
+	file_n, file_ex = os.path.splitext(file_obj) # splits the file into 2 name and exetionsion 	
+	file_csv = pd.read_excel(file_obj, file_n, index_col=None) # this is passed the file name and the name of the sheet first sheet
+	file_csv.to_csv('file_label.csv', encoding='utf-8', index=False) #  converts xlsx file to csv
 
 
 
@@ -118,11 +125,23 @@ if __name__ == "__main__":
 	Tk().withdraw() # we don't want a full GUI, so keep the root window from appearing
 	filename = askopenfilename() # show an "Open" dialog box and return the path to the selected file
 
-	#need to add another function to convert file to csv
+	file = ntpath.basename(filename) # just takes out the file name from the path 
 
-	with open(filename) as f_obj:   # opens the csv file
-		# still have to get this to print to document, might try multiprocessing to do this
-		csv_reader(f_obj)             # sends the csv_reader function the csv data file 
+	file = "".join(file) # turns files name into string
+ 
+	suffix = "xlsx"  # creates a string that has the valve of xlsx
+
+	if file.endswith(suffix) == False:   # checks to see if the file type is true
+		with open(filename) as f_obj:   # opens the csv file
+			# still have to get this to print to document, might try multiprocessing to do this
+			csv_reader(f_obj)             # sends the csv_reader function the csv data file 
+	elif file.endswith(suffix) == True:
+		file_converter(filename)
+		with open('file_label.csv') as f_obj:   # opens the csv file
+		 	csv_reader(f_obj)        
+		 	f_obj.close()   # closes f_obj
+			os.remove('file_label.csv') # deletes the temp file 
+
 
 
 	sheet.save('basic1.pdf')
